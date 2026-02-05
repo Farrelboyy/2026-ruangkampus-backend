@@ -9,5 +9,6 @@ namespace RuangKampus.Backend.Models
         public DateTime EndTime { get; set; }
         public string Purpose { get; set; } = string.Empty;
         public DateTime? DeletedAt { get; set; }
+        public string Status { get; set; } = "Pending";
     }
 }
