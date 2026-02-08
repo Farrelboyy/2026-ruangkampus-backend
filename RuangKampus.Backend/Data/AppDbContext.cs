@@ -11,5 +11,6 @@ namespace RuangKampus.Backend.Data
 
         // Ini mendaftarkan model RoomLoan biar jadi Tabel di Database
         public DbSet<RoomLoan> RoomLoans { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
