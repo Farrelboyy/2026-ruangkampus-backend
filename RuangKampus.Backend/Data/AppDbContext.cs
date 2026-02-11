@@ -9,21 +9,33 @@ namespace RuangKampus.Backend.Data
         {
         }
 
-        // Ini tabel-tabel lu
         public DbSet<RoomLoan> RoomLoans { get; set; }
         public DbSet<User> Users { get; set; }
 
-        // 👇 NAH, LOGIC SEEDER ITU TARUHNYA DISINI
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Ini perintah buat ngisi data otomatis ke tabel RoomLoans
+            // ==========================================
+            // 1. SEED DATA USER (Fixed: Pake 'Password' bukan 'PasswordHash')
+            // ==========================================
+            modelBuilder.Entity<User>().HasData(
+                new User { Id = 1, Username = "admin", Password = "admin", Role = "Admin" },
+                new User { Id = 2, Username = "mahasiswa", Password = "user123", Role = "User" },
+                new User { Id = 3, Username = "Budi Santoso", Password = "12345", Role = "User" },
+                new User { Id = 4, Username = "Siti Aminah", Password = "12345", Role = "User" },
+                new User { Id = 5, Username = "Himpunan Mahasiswa", Password = "12345", Role = "User" },
+                new User { Id = 6, Username = "Dosen Tamu", Password = "12345", Role = "User" }
+            );
+
+            // ==========================================
+            // 2. SEED DATA PEMINJAMAN
+            // ==========================================
             modelBuilder.Entity<RoomLoan>().HasData(
                 new RoomLoan
                 {
                     Id = 1,
-                    BorrowerName = "Budi Santoso", // <-- Coba login pake nama ini nanti
+                    BorrowerName = "Budi Santoso", 
                     RoomName = "Lab Komputer 1",
                     Purpose = "Pengerjaan Tugas Akhir",
                     StartTime = new DateTime(2026, 2, 10, 8, 0, 0),
@@ -67,7 +79,7 @@ namespace RuangKampus.Backend.Data
                 new RoomLoan
                 {
                     Id = 5,
-                    BorrowerName = "Admin", // <-- Siapa tau lu login pake user admin
+                    BorrowerName = "Admin",
                     RoomName = "Studio Musik",
                     Purpose = "Testing Sistem",
                     StartTime = new DateTime(2026, 2, 14, 19, 0, 0),

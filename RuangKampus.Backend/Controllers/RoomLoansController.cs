@@ -17,7 +17,6 @@ namespace RuangKampus.Backend.Controllers
             _context = context;
         }
 
-        // GET: api/RoomLoans (Udah Aman - Soft Delete)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoomLoan>>> GetRoomLoans()
         {
@@ -26,7 +25,6 @@ namespace RuangKampus.Backend.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/RoomLoans/5 (Udah Aman - Soft Delete)
         [HttpGet("{id}")]
         public async Task<ActionResult<RoomLoan>> GetRoomLoan(int id)
         {
@@ -40,11 +38,9 @@ namespace RuangKampus.Backend.Controllers
             return roomLoan;
         }
 
-        // POST: api/RoomLoans (UPDATED: Pake DTO ✅)
         [HttpPost]
         public async Task<ActionResult<RoomLoan>> PostRoomLoan(CreateLoanDto request)
         {
-            // Mapping dari DTO ke Model Database
             var roomLoan = new RoomLoan
             {
                 BorrowerName = request.BorrowerName,
@@ -52,51 +48,52 @@ namespace RuangKampus.Backend.Controllers
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
                 Purpose = request.Purpose,
-                Status = "Pending", // Default
-                IsDeleted = false   // Default
+                Status = "Pending",
+                IsDeleted = false
             };
 
             _context.RoomLoans.Add(roomLoan);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRoomLoan", new { id = roomLoan.Id }, roomLoan);
+            return CreatedAtAction(nameof(GetRoomLoan), new { id = roomLoan.Id }, roomLoan);
         }
 
-        // PUT: api/RoomLoans/5 (UPDATED: Pake DTO ✅)
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoomLoan(int id, CreateLoanDto request)
+        public async Task<IActionResult> PutRoomLoan(int id, [FromBody] UpdateLoanRequest request)
         {
-            // Cari data lama di database
             var existingLoan = await _context.RoomLoans.FindAsync(id);
 
-            // Cek ada gak? atau udah dihapus?
             if (existingLoan == null || existingLoan.IsDeleted)
             {
                 return NotFound();
             }
 
-            // Update cuma field yang dibolehin (ID & Status gak berubah)
-            existingLoan.BorrowerName = request.BorrowerName;
-            existingLoan.RoomName = request.RoomName;
-            existingLoan.StartTime = request.StartTime;
-            existingLoan.EndTime = request.EndTime;
-            existingLoan.Purpose = request.Purpose;
+            if (!string.IsNullOrEmpty(request.Status)) existingLoan.Status = request.Status;
+            if (!string.IsNullOrEmpty(request.BorrowerName)) existingLoan.BorrowerName = request.BorrowerName;
+            if (!string.IsNullOrEmpty(request.RoomName)) existingLoan.RoomName = request.RoomName;
+            if (!string.IsNullOrEmpty(request.Purpose)) existingLoan.Purpose = request.Purpose;
+            if (request.StartTime != default) existingLoan.StartTime = request.StartTime;
+            if (request.EndTime != default) existingLoan.EndTime = request.EndTime;
 
-            // Simpan perubahan
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoomLoanExists(id)) return NotFound();
-                else throw;
+                if (!RoomLoanExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
             return NoContent();
         }
 
-        // DELETE: api/RoomLoans/5 (Udah Aman - Soft Delete)
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoomLoan(int id)
         {
@@ -106,7 +103,6 @@ namespace RuangKampus.Backend.Controllers
                 return NotFound();
             }
 
-            // Soft Delete Logic
             roomLoan.IsDeleted = true;
             roomLoan.DeletedAt = DateTime.UtcNow;
             _context.Entry(roomLoan).State = EntityState.Modified;
@@ -120,5 +116,15 @@ namespace RuangKampus.Backend.Controllers
         {
             return _context.RoomLoans.Any(e => e.Id == id && !e.IsDeleted);
         }
+    }
+
+    public class UpdateLoanRequest
+    {
+        public string? BorrowerName { get; set; }
+        public string? RoomName { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public string? Purpose { get; set; }
+        public string? Status { get; set; }
     }
 }
