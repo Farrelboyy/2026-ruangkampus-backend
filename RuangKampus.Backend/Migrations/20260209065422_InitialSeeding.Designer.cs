@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RuangKampus.Backend.Data;
 
@@ -11,9 +12,11 @@ using RuangKampus.Backend.Data;
 namespace RuangKampus.Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260209065422_InitialSeeding")]
+    partial class InitialSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,9 +131,6 @@ namespace RuangKampus.Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -151,15 +151,13 @@ namespace RuangKampus.Backend.Migrations
                         new
                         {
                             Id = 1,
-                            IsDeleted = false,
-                            Password = "admin",
+                            Password = "admin123",
                             Role = "Admin",
                             Username = "admin"
                         },
                         new
                         {
                             Id = 2,
-                            IsDeleted = false,
                             Password = "user123",
                             Role = "User",
                             Username = "mahasiswa"
@@ -167,7 +165,6 @@ namespace RuangKampus.Backend.Migrations
                         new
                         {
                             Id = 3,
-                            IsDeleted = false,
                             Password = "12345",
                             Role = "User",
                             Username = "Budi Santoso"
@@ -175,7 +172,6 @@ namespace RuangKampus.Backend.Migrations
                         new
                         {
                             Id = 4,
-                            IsDeleted = false,
                             Password = "12345",
                             Role = "User",
                             Username = "Siti Aminah"
@@ -183,7 +179,6 @@ namespace RuangKampus.Backend.Migrations
                         new
                         {
                             Id = 5,
-                            IsDeleted = false,
                             Password = "12345",
                             Role = "User",
                             Username = "Himpunan Mahasiswa"
@@ -191,7 +186,6 @@ namespace RuangKampus.Backend.Migrations
                         new
                         {
                             Id = 6,
-                            IsDeleted = false,
                             Password = "12345",
                             Role = "User",
                             Username = "Dosen Tamu"
